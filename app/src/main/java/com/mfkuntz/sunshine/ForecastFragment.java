@@ -1,10 +1,13 @@
 package com.mfkuntz.sunshine;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +46,11 @@ public  class ForecastFragment extends Fragment {
     public ForecastFragment() {
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        updateWeather();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -60,9 +70,8 @@ public  class ForecastFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh){
-            GetWeatherDataTask task = new GetWeatherDataTask();
-            task.execute("21704,USA");
 
+            updateWeather();
             return true;
         }
 
@@ -72,11 +81,11 @@ public  class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         ArrayList<String> temp = new ArrayList<String>();
 
-        forecastAdapter = new ArrayAdapter<String>(
+        forecastAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
@@ -85,9 +94,30 @@ public  class ForecastFragment extends Fragment {
         ListView list = (ListView) rootView.findViewById(R.id.listView_forecast);
         list.setAdapter(forecastAdapter);
 
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String data = forecastAdapter.getItem(position);
+
+                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
+                    .putExtra(Intent.EXTRA_TEXT, data);
+
+                startActivity(detailIntent);
+
+            }
+        });
         return rootView;
     }
 
+    private void updateWeather(){
+        GetWeatherDataTask task = new GetWeatherDataTask();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+
+        task.execute(location+",USA");
+    }
 
     public class GetWeatherDataTask extends AsyncTask<String, Void, String[]>{
 
@@ -114,7 +144,7 @@ public  class ForecastFragment extends Fragment {
                 Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                         .appendQueryParameter(QUERY_PARAM, params[0])
                         .appendQueryParameter(FORMAT_PARAM, "json")
-                        .appendQueryParameter(UNITS_PARAM, "imperial")
+                        .appendQueryParameter(UNITS_PARAM, "metric")
                         .appendQueryParameter(DAYS_PARAM, "7")
                         .build();
 
@@ -203,12 +233,33 @@ public  class ForecastFragment extends Fragment {
      * Prepare the weather high/lows for presentation.
      */
     private String formatHighLows(double high, double low) {
+
+        high = unitConversion(high);
+        low = unitConversion(low);
+
         // For presentation, assume the user doesn't care about tenths of a degree.
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
 
+
+
         String highLowStr = roundedHigh + "/" + roundedLow;
         return highLowStr;
+    }
+
+    private double unitConversion(double temperature){
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String units = prefs.getString(getString(R.string.pref_units_key), getString(R.string.pref_units_default));
+
+        //default and server response is metric
+        if (units.equals(getString(R.string.pref_units_default))){
+            return temperature;
+        }
+
+        //convert to imperial
+        return (temperature * (1.8)) + 32;
+
     }
 
     /**
