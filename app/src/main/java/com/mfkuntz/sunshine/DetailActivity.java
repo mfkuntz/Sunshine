@@ -99,12 +99,12 @@ public class DetailActivity extends ActionBarActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-            setText(rootView, forecast);
+            setText(rootView);
 
             return rootView;
         }
 
-        private void setText(View rootView, String forecast){
+        private void setText(View rootView){
             ((TextView) rootView.findViewById(R.id.detail_text))
                     .setText(forecast);
         }
