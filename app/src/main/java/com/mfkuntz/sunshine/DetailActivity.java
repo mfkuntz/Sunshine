@@ -111,7 +111,7 @@ public class DetailActivity extends ActionBarActivity {
 
         private void setShareIntent(ShareActionProvider provider){
             Intent intent = new Intent(Intent.ACTION_SEND)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
                     .putExtra(Intent.EXTRA_TEXT, forecast + FORECAST_SHARE_HASHTAG)
                     .setType("text/plain");
 
