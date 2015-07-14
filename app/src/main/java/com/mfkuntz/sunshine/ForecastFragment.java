@@ -32,11 +32,6 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
     public ForecastFragment() {
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        updateWeather();
-    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
@@ -116,6 +111,11 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
         String location = Utility.getPreferredLocation(getActivity());
 
         task.execute(location);
+    }
+
+    void onLocationChanged(){
+        updateWeather();
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
 

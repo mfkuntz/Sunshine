@@ -12,17 +12,36 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
+    String currentLocation;
+    final String FORECASTFRAGMENT_TAG = "forecast";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        currentLocation = Utility.getPreferredLocation(getApplicationContext());
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
         }
+
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        String newLocation = Utility.getPreferredLocation(getApplicationContext());
+        if (newLocation != null && !currentLocation.equals(newLocation)){
+            ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            if (fragment != null){
+                fragment.onLocationChanged();
+            }
+            currentLocation = newLocation;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

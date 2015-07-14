@@ -104,7 +104,7 @@ public class DetailActivity extends ActionBarActivity {
             //locate menu item
             MenuItem item = menu.findItem(R.id.menu_item_share);
             shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-            setShareIntent(shareActionProvider);
+            setShareIntent();
 
             super.onCreateOptionsMenu(menu, inflater);
         }
@@ -119,14 +119,18 @@ public class DetailActivity extends ActionBarActivity {
             return rootView;
         }
 
-        private void setShareIntent(ShareActionProvider provider){
+        private void setShareIntent(){
+
+            if (forecastString == null)
+                return;
+
             Intent intent = new Intent(Intent.ACTION_SEND)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-                    .putExtra(Intent.EXTRA_TEXT, forecastString + FORECAST_SHARE_HASHTAG)
+                    .putExtra(Intent.EXTRA_TEXT, forecastString + " " + FORECAST_SHARE_HASHTAG)
                     .setType("text/plain");
 
-            if (provider != null){
-                provider.setShareIntent(intent);
+            if (shareActionProvider != null){
+                shareActionProvider.setShareIntent(intent);
             }
 
 
@@ -176,6 +180,8 @@ public class DetailActivity extends ActionBarActivity {
             forecastString = String.format("%s - %s - %s/%s", dateString, weatherDescription, high, low);
 
             ((TextView) getView().findViewById(R.id.detail_text)).setText(forecastString);
+
+            setShareIntent();
         }
 
         @Override
