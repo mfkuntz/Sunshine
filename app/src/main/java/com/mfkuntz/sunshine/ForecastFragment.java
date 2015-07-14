@@ -1,11 +1,9 @@
 package com.mfkuntz.sunshine;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,17 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.CursorLoader;
 
 import com.mfkuntz.sunshine.data.WeatherContract;
-
-import java.util.ArrayList;
 
 /**
  * Created by matthew.f.k on 8/23/2014.
@@ -91,19 +85,28 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
         ListView list = (ListView) rootView.findViewById(R.id.listView_forecast);
         list.setAdapter(forecastAdapter);
 
-//        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                String data = forecastAdapter.getItem(position);
-//
-//                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
-//                        .putExtra(Intent.EXTRA_TEXT, data);
-//
-//                startActivity(detailIntent);
-//
-//            }
-//        });
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor c = (Cursor) parent.getItemAtPosition(position);
+
+                if (c == null)
+                    return;
+
+                String locationSetting = Utility.getPreferredLocation(getActivity());
+
+
+                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
+                        .setData(
+                                WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                                    locationSetting,
+                                    c.getLong(Utility.COL_WEATHER_DATE)));
+
+                startActivity(detailIntent);
+
+            }
+        });
         return rootView;
     }
 
@@ -125,8 +128,9 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
                 System.currentTimeMillis());
 
         return new CursorLoader(getActivity(),
-                weatherUriForLocation,
-                null,null,null,sortOrder);
+            weatherUriForLocation, //URI
+            Utility.FORECAST_COLUMNS, //projection
+            null,null,sortOrder);
 
 
     }

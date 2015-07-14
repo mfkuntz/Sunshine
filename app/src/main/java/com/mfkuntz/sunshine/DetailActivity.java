@@ -1,6 +1,11 @@
 package com.mfkuntz.sunshine;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -14,6 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+
+import com.mfkuntz.sunshine.data.WeatherContract;
+
+import org.w3c.dom.Text;
 
 
 public class DetailActivity extends ActionBarActivity {
@@ -59,13 +68,24 @@ public class DetailActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
         private ShareActionProvider shareActionProvider;
-        private String forecast;
         private static final String FORECAST_SHARE_HASHTAG = "#sunshine";
 
+        private final int LOADER_ID = 457;
+
+        private String forecastString;
+
         public PlaceholderFragment() {
+        }
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState){
+
+            getLoaderManager().initLoader(LOADER_ID, null, this);
+
+            super.onActivityCreated(savedInstanceState);
         }
 
         @Override
@@ -75,10 +95,7 @@ public class DetailActivity extends ActionBarActivity {
             setHasOptionsMenu(true);
 
 
-            Intent intent = getActivity().getIntent();
-            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                forecast = intent.getStringExtra(Intent.EXTRA_TEXT);
-            }
+
         }
 
         @Override
@@ -99,26 +116,70 @@ public class DetailActivity extends ActionBarActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-            setText(rootView);
-
             return rootView;
-        }
-
-        private void setText(View rootView){
-            ((TextView) rootView.findViewById(R.id.detail_text))
-                    .setText(forecast);
         }
 
         private void setShareIntent(ShareActionProvider provider){
             Intent intent = new Intent(Intent.ACTION_SEND)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-                    .putExtra(Intent.EXTRA_TEXT, forecast + FORECAST_SHARE_HASHTAG)
+                    .putExtra(Intent.EXTRA_TEXT, forecastString + FORECAST_SHARE_HASHTAG)
                     .setType("text/plain");
 
             if (provider != null){
                 provider.setShareIntent(intent);
             }
 
+
+        }
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+
+            Intent intent = getActivity().getIntent();
+            if (intent == null) {
+                return null;
+            }
+
+            Uri parsedUri = Uri.parse(intent.getDataString());
+            String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE  +" ASC";
+
+            return new CursorLoader(getActivity(),
+                    parsedUri, //URI
+                    Utility.FORECAST_COLUMNS, //projection
+                    null,null,sortOrder);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+            String s = "DEBUG";
+
+            if (cursor == null)
+                return;
+
+            if (!cursor.moveToFirst())
+                return;
+
+            String dateString = Utility.formatDate(
+                    cursor.getLong(Utility.COL_WEATHER_DATE));
+
+            String weatherDescription =
+                    cursor.getString(Utility.COL_WEATHER_DESC);
+
+            boolean isMetric = Utility.isMetric(getActivity());
+
+            String high = Utility.formatTemperature(
+                    cursor.getDouble(Utility.COL_WEATHER_MAX_TEMP), isMetric);
+
+            String low = Utility.formatTemperature(
+                    cursor.getDouble(Utility.COL_WEATHER_MIN_TEMP), isMetric);
+
+            forecastString = String.format("%s - %s - %s/%s", dateString, weatherDescription, high, low);
+
+            ((TextView) getView().findViewById(R.id.detail_text)).setText(forecastString);
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
 
         }
     }
