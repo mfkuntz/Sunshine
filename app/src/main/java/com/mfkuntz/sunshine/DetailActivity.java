@@ -35,7 +35,7 @@ public class DetailActivity extends ActionBarActivity {
         setContentView(R.layout.activity_detail);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new DetailFragment())
                     .commit();
         }
     }
@@ -65,128 +65,5 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-        private ShareActionProvider shareActionProvider;
-        private static final String FORECAST_SHARE_HASHTAG = "#sunshine";
-
-        private final int LOADER_ID = 457;
-
-        private String forecastString;
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState){
-
-            getLoaderManager().initLoader(LOADER_ID, null, this);
-
-            super.onActivityCreated(savedInstanceState);
-        }
-
-        @Override
-        public void onCreate(Bundle state){
-            super.onCreate(state);
-
-            setHasOptionsMenu(true);
-
-
-
-        }
-
-        @Override
-        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-
-            //locate menu item
-            MenuItem item = menu.findItem(R.id.menu_item_share);
-            shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-            setShareIntent();
-
-            super.onCreateOptionsMenu(menu, inflater);
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-
-
-            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
-            return rootView;
-        }
-
-        private void setShareIntent(){
-
-            if (forecastString == null)
-                return;
-
-            Intent intent = new Intent(Intent.ACTION_SEND)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-                    .putExtra(Intent.EXTRA_TEXT, forecastString + " " + FORECAST_SHARE_HASHTAG)
-                    .setType("text/plain");
-
-            if (shareActionProvider != null){
-                shareActionProvider.setShareIntent(intent);
-            }
-
-
-        }
-
-        @Override
-        public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-
-            Intent intent = getActivity().getIntent();
-            if (intent == null) {
-                return null;
-            }
-
-            Uri parsedUri = Uri.parse(intent.getDataString());
-            String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE  +" ASC";
-
-            return new CursorLoader(getActivity(),
-                    parsedUri, //URI
-                    Utility.FORECAST_COLUMNS, //projection
-                    null,null,sortOrder);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            String s = "DEBUG";
-
-            if (cursor == null)
-                return;
-
-            if (!cursor.moveToFirst())
-                return;
-
-            String dateString = Utility.formatDate(
-                    cursor.getLong(Utility.COL_WEATHER_DATE));
-
-            String weatherDescription =
-                    cursor.getString(Utility.COL_WEATHER_DESC);
-
-            boolean isMetric = Utility.isMetric(getActivity());
-
-            String high = Utility.formatTemperature(
-                    cursor.getDouble(Utility.COL_WEATHER_MAX_TEMP), isMetric);
-
-            String low = Utility.formatTemperature(
-                    cursor.getDouble(Utility.COL_WEATHER_MIN_TEMP), isMetric);
-
-            forecastString = String.format("%s - %s - %s/%s", dateString, weatherDescription, high, low);
-
-            ((TextView) getView().findViewById(R.id.detail_text)).setText(forecastString);
-
-            setShareIntent();
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
-
-        }
-    }
 }
