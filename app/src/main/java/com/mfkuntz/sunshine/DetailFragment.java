@@ -117,6 +117,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             return;
 
         ViewHolder viewHolder = (ViewHolder) getView().getTag();
+
+        int iconID = Utility.getArtResourceForWeatherCondition(cursor.getInt(Utility.COL_DETAIL_CONDITION_ID));
+        viewHolder.icon.setImageResource(iconID);
+
+
         boolean isMetric = Utility.isMetric(getActivity());
 
         long dateLong = cursor.getLong(Utility.COL_WEATHER_DATE);
