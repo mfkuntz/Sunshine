@@ -19,6 +19,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.CursorLoader;
 
 import com.mfkuntz.sunshine.data.WeatherContract;
+import com.mfkuntz.sunshine.tools.ICallback;
 
 /**
  * Created by matthew.f.k on 8/23/2014.
@@ -91,14 +92,15 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
                 String locationSetting = Utility.getPreferredLocation(getActivity());
 
+                ICallback main = ((ICallback)getActivity());
 
-                Intent detailIntent = new Intent(getActivity(), DetailActivity.class)
-                        .setData(
-                                WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
-                                    locationSetting,
-                                    c.getLong(Utility.COL_WEATHER_DATE)));
+                Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                        locationSetting,
+                        c.getLong(Utility.COL_WEATHER_DATE));
 
-                startActivity(detailIntent);
+
+                main.onItemSelected(weatherUri);
+
 
             }
         });

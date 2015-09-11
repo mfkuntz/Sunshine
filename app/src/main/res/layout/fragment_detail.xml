@@ -26,16 +26,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:id="@+id/detail_day"
-                android:text="Today"/>
+                android:id="@+id/detail_day" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/detail_date"
 
-                android:id="@+id/detail_date"
-                android:text="June 24"/>
+                android:id="@+id/detail_date" />
 
 
         </LinearLayout>
@@ -60,16 +58,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
 
-                    android:id="@+id/detail_high"
-                    android:text="21"/>
+                    android:id="@+id/detail_high" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/detail_high"
 
-                    android:id="@+id/detail_low"
-                    android:text="8"/>
+                    android:id="@+id/detail_low" />
 
 
             </LinearLayout>
@@ -102,7 +98,6 @@
                 android:layout_height="wrap_content"
 
                 android:id="@+id/detail_humidity"
-                android:text="84%"
                 android:textStyle="bold" />
 
 
@@ -119,7 +114,6 @@
                 android:layout_below="@+id/detail_humidity"
 
                 android:id="@+id/detail_wind"
-                android:text="6 km/H "
                 android:textStyle="bold" />
 
 
@@ -137,7 +131,6 @@
                 android:layout_height="wrap_content"
 
                 android:id="@+id/detail_pressure"
-                android:text="1014 hPa"
                 android:textStyle="bold" />
 
 

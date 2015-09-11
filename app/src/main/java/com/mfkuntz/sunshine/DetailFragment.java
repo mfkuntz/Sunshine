@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mfkuntz.sunshine.data.WeatherContract;
+
 /**
  * Created by matth on 7/18/2015.
  */
@@ -28,6 +30,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private final int LOADER_ID = 457;
 
     private String forecastString;
+
+    private Uri mURI;
 
     public DetailFragment() {
     }
@@ -45,9 +49,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         super.onCreate(state);
 
         setHasOptionsMenu(true);
+    }
 
+    static DetailFragment newInstance(Uri uri){
+        DetailFragment df = new DetailFragment();
 
+        Bundle bundle = new Bundle();
+        bundle.putString("Uri", uri.toString());
 
+        df.setArguments(bundle);
+
+        return df;
     }
 
     @Override
@@ -94,15 +106,25 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 
         Intent intent = getActivity().getIntent();
+        String dataString;
         if (intent == null || intent.getData() == null) {
+
+            dataString = getArguments() != null ? getArguments().getString("Uri") : "";
+
+        }else{
+
+            dataString = intent.getDataString();
+        }
+
+        if (dataString == null || dataString.isEmpty()){
             return null;
         }
 
-        Uri parsedUri = Uri.parse(intent.getDataString());
+        mURI = Uri.parse(dataString);
 
 
         return new CursorLoader(getActivity(),
-                parsedUri, //URI
+                mURI, //URI
                 Utility.DETAIL_COLUMNS, //projection
                 null,null,null);
     }
@@ -149,7 +171,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         viewHolder.low.setText(low);
 
         float humidity = cursor.getFloat(Utility.COL_DETAIL_HUMIDITY);
-        viewHolder.pressure.setText(getActivity().getString(R.string.format_humidity, humidity));
+        viewHolder.humidity.setText(getActivity().getString(R.string.format_humidity, humidity));
 
 
         float windSpeed = cursor.getFloat(Utility.COL_DETAIL_WIND_SPEED);
@@ -167,6 +189,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    public void onLocationChanged(String newLocation) {
+        Uri uri = mURI;
+
+        if (uri != null){
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            uri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mURI = uri;
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
+        }
     }
 
     static class ViewHolder{
