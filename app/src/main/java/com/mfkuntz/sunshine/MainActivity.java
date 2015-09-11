@@ -13,18 +13,23 @@ import android.widget.Toast;
 public class MainActivity extends ActionBarActivity {
 
     String currentLocation;
-    final String FORECASTFRAGMENT_TAG = "forecast";
+    final String DETAILFRAGMENT_TAG  = "DFTAG";
+    boolean twoPane = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         currentLocation = Utility.getPreferredLocation(getApplicationContext());
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
+
+        if (findViewById(R.id.weather_detail_container) != null){
+            twoPane = true;
+
+            if (savedInstanceState == null){
+                getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.weather_detail_container, new DetailFragment())
                     .commit();
+            }
         }
 
     }
@@ -35,7 +40,7 @@ public class MainActivity extends ActionBarActivity {
 
         String newLocation = Utility.getPreferredLocation(getApplicationContext());
         if (newLocation != null && !currentLocation.equals(newLocation)){
-            ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             if (fragment != null){
                 fragment.onLocationChanged();
             }
