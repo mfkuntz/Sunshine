@@ -27,8 +27,14 @@ import com.mfkuntz.sunshine.tools.ICallback;
 
 public  class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    ForecastAdapter forecastAdapter;
+
     private final int LOADER_ID = 456;
+    private final String POSITION_TAG = "ListPosition";
+
+    ForecastAdapter forecastAdapter;
+    ListView forecastListView;
+
+    private int mPosition = ListView.INVALID_POSITION;
 
     public ForecastFragment() {
     }
@@ -56,6 +62,16 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+
+        if (mPosition != ListView.INVALID_POSITION){
+            outState.putInt(POSITION_TAG, mPosition);
+        }
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         int id = item.getItemId();
 
@@ -70,18 +86,23 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             final Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(POSITION_TAG)){
+            mPosition = savedInstanceState.getInt(POSITION_TAG);
+        }
+
 
         forecastAdapter = new ForecastAdapter(
                 getActivity(),
                 null,
                 0);
 
-        ListView list = (ListView) rootView.findViewById(R.id.listView_forecast);
-        list.setAdapter(forecastAdapter);
+        forecastListView = (ListView) rootView.findViewById(R.id.listView_forecast);
+        forecastListView.setAdapter(forecastAdapter);
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        forecastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -101,6 +122,7 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
                 main.onItemSelected(weatherUri);
 
+                mPosition = position;
 
             }
         });
@@ -140,6 +162,9 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         forecastAdapter.swapCursor(cursor);
+        if (mPosition != ListView.INVALID_POSITION) {
+            forecastListView.smoothScrollToPosition(mPosition);
+        }
     }
 
     @Override
