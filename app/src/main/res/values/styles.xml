@@ -2,13 +2,22 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/sunshine_blue</item>
+        <item name="colorPrimaryDark">@color/sunshine_dark_blue</item>
     </style>
 
-    <!-- Example customization of dimensions originally defined in res/values/dimens.xml
-     (such as screen margins) for screens with more than 820dp of available width. This
-     would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively). -->
-    <!--<dimen name="activity_horizontal_margin">64dp</dimen>-->
+    <style name="ForecastTheme" parent="AppTheme">
+        <item name="actionBarStyle">@style/ActionBar.Solid.Sunshine.NoTitle</item>
+    </style>
+
+    <!-- main activity action bar styles -->
+    <style name="ActionBar.Solid.Sunshine.NoTitle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="displayOptions">useLogo|showHome</item>
+        <item name="logo">@drawable/ic_logo</item>
+    </style>
+
+    <style name="SettingsTheme" parent="AppTheme">
+    </style>
 
 
     <style name="ListChoice">
