@@ -34,6 +34,11 @@ public class MainActivity extends ActionBarActivity implements ICallback{
             }
         }
 
+        if (twoPane) {
+
+            ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+            fragment.setTwoPane(twoPane);
+        }
     }
 
     @Override

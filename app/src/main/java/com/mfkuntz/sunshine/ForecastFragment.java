@@ -36,7 +36,17 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
     private int mPosition = ListView.INVALID_POSITION;
 
+
+    private boolean mTwoPane = false;
+    public void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
+        if (forecastAdapter != null){
+            forecastAdapter.setTwoPane(mTwoPane);
+        }
+    }
+
     public ForecastFragment() {
+
     }
 
 
@@ -52,6 +62,7 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -98,6 +109,8 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
                 getActivity(),
                 null,
                 0);
+
+        forecastAdapter.setTwoPane(mTwoPane);
 
         forecastListView = (ListView) rootView.findViewById(R.id.listView_forecast);
         forecastListView.setAdapter(forecastAdapter);

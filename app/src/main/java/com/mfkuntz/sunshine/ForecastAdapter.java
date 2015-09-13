@@ -23,10 +23,14 @@ public class ForecastAdapter extends CursorAdapter {
     public final int VIEW_TYPE_TODAY = 0;
     public final int VIEW_TYPE_FUTURE = 1;
 
-
+    private boolean mTwoPane = false;
 
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+    }
+
+    public void setTwoPane(boolean b){
+        mTwoPane = b;
     }
 
     /**
@@ -84,7 +88,8 @@ public class ForecastAdapter extends CursorAdapter {
 
     @Override
     public int getItemViewType(int position){
-        return (position == 0)? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE;
+        //just use the normal, non special if we have two panes
+        return (position == 0 && !mTwoPane)? VIEW_TYPE_TODAY : VIEW_TYPE_FUTURE;
     }
 
     /*
