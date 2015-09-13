@@ -31,8 +31,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/detail_date"
-
                 android:id="@+id/detail_date" />
 
 
@@ -63,7 +61,6 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/detail_high"
 
                     android:id="@+id/detail_low" />
 
@@ -90,8 +87,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
-
                 android:text="Humidity: "/>
             <TextView
                 android:layout_width="wrap_content"
@@ -104,14 +99,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/detail_humidity"
 
 
                 android:text="Wind: "/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/detail_humidity"
 
                 android:id="@+id/detail_wind"
                 android:textStyle="bold" />
@@ -122,7 +115,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/detail_wind"
 
                 android:id="@+id/detail_pressure_label"
                 android:text="Pressure: "/>
@@ -132,10 +124,6 @@
 
                 android:id="@+id/detail_pressure"
                 android:textStyle="bold" />
-
-
-
-
 
 
 
