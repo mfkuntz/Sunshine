@@ -6,6 +6,8 @@
         <item name="colorPrimaryDark">@color/sunshine_dark_blue</item>
     </style>
 
+
+
     <style name="ForecastTheme" parent="AppTheme">
         <item name="actionBarStyle">@style/ActionBar.Solid.Sunshine.NoTitle</item>
     </style>

@@ -159,7 +159,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         forecastString = String.format("%s - %s - %s/%s", dateString, weatherDescription, high, low);
 
-
+        viewHolder.description.setText(cursor.getString(Utility.COL_WEATHER_DESC));
 
         String dayName = Utility.getDayName(getActivity(), dateLong);
         viewHolder.day.setText(dayName);
@@ -219,7 +219,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             icon = (ImageView) view.findViewById(R.id.detail_icon);
             date = (TextView) view.findViewById(R.id.detail_date);
             day = (TextView) view.findViewById(R.id.detail_day);
-//            description =
+            description = (TextView) view.findViewById(R.id.detail_forecast);
             high = (TextView) view.findViewById(R.id.detail_high);
             low = (TextView) view.findViewById(R.id.detail_low);
             humidity = (TextView) view.findViewById(R.id.detail_humidity);

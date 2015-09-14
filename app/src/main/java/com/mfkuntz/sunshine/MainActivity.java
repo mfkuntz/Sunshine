@@ -32,10 +32,8 @@ public class MainActivity extends ActionBarActivity implements ICallback{
                     .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
                     .commit();
             }
-        }else{
-            getSupportActionBar().setElevation(0f);
         }
-
+        getSupportActionBar().setElevation(0f);
         if (twoPane) {
 
             ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
