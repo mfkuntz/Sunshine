@@ -123,7 +123,9 @@ public class ForecastAdapter extends CursorAdapter {
         viewHolder.date.setText(date);
 
 
-        viewHolder.description.setText(cursor.getString(Utility.COL_WEATHER_DESC));
+        String description = cursor.getString(Utility.COL_WEATHER_DESC);
+        viewHolder.description.setText(description);
+        viewHolder.icon.setContentDescription(description);
 
 
         boolean isMetric = Utility.isMetric(context);
