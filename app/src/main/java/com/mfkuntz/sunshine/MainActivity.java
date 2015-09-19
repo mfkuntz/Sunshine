@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.mfkuntz.sunshine.sync.SunshineSyncAdapter;
 import com.mfkuntz.sunshine.tools.ICallback;
 
 
@@ -39,6 +40,8 @@ public class MainActivity extends ActionBarActivity implements ICallback{
             ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             fragment.setTwoPane(twoPane);
         }
+
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override

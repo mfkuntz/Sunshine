@@ -42,4 +42,10 @@
     <string name="IconAccessibilityDescription">Current weather status icon</string>
 
 
+
+    <!-- Account type (for sync-adapter authenticator) -->
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">sunshine.mfkuntz.com</string>
+    <string name="content_authority">com.mfkuntz.sunshine</string>
+
 </resources>

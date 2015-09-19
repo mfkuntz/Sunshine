@@ -1,9 +1,13 @@
 package com.mfkuntz.sunshine;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +23,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.CursorLoader;
 
 import com.mfkuntz.sunshine.data.WeatherContract;
-import com.mfkuntz.sunshine.service.WeatherSyncService;
+import com.mfkuntz.sunshine.sync.SunshineSyncAdapter;
 import com.mfkuntz.sunshine.tools.ICallback;
 
 /**
@@ -145,13 +149,7 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
     private void updateWeather(){
 
-        String location = Utility.getPreferredLocation(getActivity());
-
-        Intent serviceIntent = new Intent(getActivity(), WeatherSyncService.class);
-        serviceIntent.putExtra(WeatherSyncService.ZIP_KEY ,location);
-
-        getActivity().startService(serviceIntent);
-
+        SunshineSyncAdapter.syncImmediately(getActivity());
 
     }
 
