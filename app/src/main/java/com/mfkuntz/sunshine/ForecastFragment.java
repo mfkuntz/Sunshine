@@ -19,6 +19,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.content.CursorLoader;
 
 import com.mfkuntz.sunshine.data.WeatherContract;
+import com.mfkuntz.sunshine.service.WeatherSyncService;
 import com.mfkuntz.sunshine.tools.ICallback;
 
 /**
@@ -143,11 +144,15 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
     }
 
     private void updateWeather(){
-        FetchWeatherTask task = new FetchWeatherTask(getActivity());
 
         String location = Utility.getPreferredLocation(getActivity());
 
-        task.execute(location);
+        Intent serviceIntent = new Intent(getActivity(), WeatherSyncService.class);
+        serviceIntent.putExtra(WeatherSyncService.ZIP_KEY ,location);
+
+        getActivity().startService(serviceIntent);
+
+
     }
 
     void onLocationChanged(){
