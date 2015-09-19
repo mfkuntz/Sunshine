@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -32,6 +33,7 @@ public class SettingsActivity extends PreferenceActivity
 
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_units_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_notification_key)));
         // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
         // updated when the preference changes.
         // TODO: Add preferences
@@ -66,7 +68,22 @@ public class SettingsActivity extends PreferenceActivity
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
             }
-        } else {
+        }else if (preference instanceof CheckBoxPreference){
+            if (stringValue.isEmpty())
+                return true;
+
+            boolean checked = (boolean) value;
+            String message;
+            if (checked)
+                message = "We won't show you any notifications";
+            else
+                message = "Receiving normal notifications";
+
+            preference.setSummary(message);
+
+
+        }
+        else {
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
 

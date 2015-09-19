@@ -103,6 +103,11 @@ public class Utility {
                 .equals(context.getString(R.string.pref_units_default));
     }
 
+    public static String formatTemperature(double temp, Context context){
+        boolean isMetric = Utility.isMetric(context);
+        return formatTemperature(temp, isMetric, context);
+    }
+
     static String formatTemperature(double temperature, boolean isMetric, Context context) {
         double temp;
         if ( !isMetric ) {
