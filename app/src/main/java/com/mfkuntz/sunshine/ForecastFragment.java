@@ -1,13 +1,9 @@
 package com.mfkuntz.sunshine;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +17,7 @@ import android.widget.ListView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.CursorLoader;
+import android.widget.Toast;
 
 import com.mfkuntz.sunshine.data.WeatherContract;
 import com.mfkuntz.sunshine.sync.SunshineSyncAdapter;
@@ -40,7 +37,6 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
     ListView forecastListView;
 
     private int mPosition = ListView.INVALID_POSITION;
-
 
     private boolean mTwoPane = false;
     public void setTwoPane(boolean twoPane) {
@@ -95,6 +91,13 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
             updateWeather();
             return true;
+        }
+
+        if (id == R.id.action_map){
+            openPreferredLocationMap();
+            return true;
+
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -156,6 +159,30 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
     void onLocationChanged(){
         updateWeather();
         getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
+
+    private void openPreferredLocationMap(){
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW);
+
+        Cursor c = forecastAdapter.getCursor();
+        if (c == null) return;
+
+        if (!c.moveToFirst()) return;
+
+        String lat = c.getString(Utility.COL_COORD_LAT);
+        String longitude = c.getString(Utility.COL_COORD_LONG);
+
+        Uri uri = Uri.parse("geo:" + lat + "," + longitude);
+
+        mapIntent.setData(uri);
+
+        if (mapIntent.resolveActivity(getActivity().getPackageManager()) == null){
+            Toast.makeText(getActivity(), "No Map Provider Installed", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        startActivity(mapIntent);
+        return;
     }
 
 

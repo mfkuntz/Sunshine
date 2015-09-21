@@ -82,35 +82,12 @@ public class MainActivity extends ActionBarActivity implements ICallback{
             return true;
         }
 
-        if (id == R.id.action_map){
-            openPreferredLocationMap();
-            return true;
 
-
-        }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void openPreferredLocationMap(){
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW);
 
-        String location = PreferenceManager.getDefaultSharedPreferences(this).getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-
-        mapIntent.setData(
-                Uri.parse("geo:0,0?").buildUpon()
-                        .appendQueryParameter("q", location)
-                        .build()
-        );
-
-        if (mapIntent.resolveActivity(getPackageManager()) == null){
-            Toast.makeText(this, "No Map Provider Installed", Toast.LENGTH_SHORT);
-            return;
-        }
-
-        startActivity(mapIntent);
-        return;
-    }
 
     @Override
     public void onItemSelected(Uri dateUri) {
