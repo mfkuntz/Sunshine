@@ -6,4 +6,10 @@
         android:title="@string/action_refresh"
         android:id="@+id/action_refresh"
         app:showAsAction="never"/>
+
+    <item
+        android:title="Notify"
+        android:id="@+id/action_notify"
+        app:showAsAction="never"/>
+
 </menu>

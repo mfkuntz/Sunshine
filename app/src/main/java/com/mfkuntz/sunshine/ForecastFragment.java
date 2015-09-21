@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.mfkuntz.sunshine.data.WeatherContract;
 import com.mfkuntz.sunshine.sync.SunshineSyncAdapter;
 import com.mfkuntz.sunshine.tools.ICallback;
+import com.mfkuntz.sunshine.tools.Notifications;
 
 /**
  * Created by matthew.f.k on 8/23/2014.
@@ -96,8 +97,11 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
         if (id == R.id.action_map){
             openPreferredLocationMap();
             return true;
+        }
 
-
+        if (id == R.id.action_notify){
+            Notifications.NotifyWeather(getActivity(), true);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
