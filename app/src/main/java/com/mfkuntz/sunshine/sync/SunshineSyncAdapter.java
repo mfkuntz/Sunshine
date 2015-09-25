@@ -3,20 +3,25 @@ package com.mfkuntz.sunshine.sync;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
+import android.content.BroadcastReceiver;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.mfkuntz.sunshine.ForecastFragment;
+import com.mfkuntz.sunshine.MainActivity;
 import com.mfkuntz.sunshine.R;
 import com.mfkuntz.sunshine.Utility;
 import com.mfkuntz.sunshine.data.WeatherContract;
@@ -389,6 +394,9 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
+
+        getContext().sendBroadcast(new Intent(ForecastFragment.SYNC_FINISHED));
+
     }
 
     /**
@@ -439,5 +447,10 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         locationCursor.close();
         // Wait, that worked?  Yes!
         return locationId;
+    }
+
+    public interface SyncCallback{
+        void onStart();
+        void onSuccess();
     }
 }

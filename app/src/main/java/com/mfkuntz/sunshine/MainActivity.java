@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,16 +51,22 @@ public class MainActivity extends ActionBarActivity implements ICallback{
 
         String newLocation = Utility.getPreferredLocation(getApplicationContext());
         if (newLocation != null && !currentLocation.equals(newLocation)){
-            ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
-            if (fragment != null){
-                fragment.onLocationChanged();
-            }
+
+            refresh();
+
             DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
             if (detailFragment != null){
                 detailFragment.onLocationChanged(newLocation);
             }
 
             currentLocation = newLocation;
+        }
+    }
+
+    private void refresh(){
+        ForecastFragment fragment = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+        if (fragment != null){
+            fragment.onLocationChanged();
         }
     }
 

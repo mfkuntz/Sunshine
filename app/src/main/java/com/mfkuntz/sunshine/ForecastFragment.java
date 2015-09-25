@@ -1,10 +1,14 @@
 package com.mfkuntz.sunshine;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,6 +40,10 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
     ForecastAdapter forecastAdapter;
     ListView forecastListView;
+    SwipeRefreshLayout swipeRefresh;
+
+    public static final String SYNC_FINISHED = "com.mfkuntz.sunshine.SYNC_FINISHED";
+    private static IntentFilter syncIntentFilter = new IntentFilter(SYNC_FINISHED);
 
     private int mPosition = ListView.INVALID_POSITION;
 
@@ -64,7 +72,18 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(syncBroadcastReceiver, syncIntentFilter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(syncBroadcastReceiver);
     }
 
     @Override
@@ -138,7 +157,7 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
                 String locationSetting = Utility.getPreferredLocation(getActivity());
 
-                ICallback main = ((ICallback)getActivity());
+                ICallback main = ((ICallback) getActivity());
 
                 Uri weatherUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
                         locationSetting,
@@ -151,13 +170,29 @@ public  class ForecastFragment extends Fragment implements LoaderManager.LoaderC
 
             }
         });
+
+        swipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.SwipeRefresh);
+
+        (swipeRefresh).setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefresh.setRefreshing(true);
+                SunshineSyncAdapter.syncImmediately(getActivity());
+            }
+        });
+
         return rootView;
     }
 
+    private BroadcastReceiver syncBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            swipeRefresh.setRefreshing(false);
+        }
+    };
+
     private void updateWeather(){
-
         SunshineSyncAdapter.syncImmediately(getActivity());
-
     }
 
     void onLocationChanged(){
